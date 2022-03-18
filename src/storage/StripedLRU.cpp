@@ -5,12 +5,12 @@ namespace Backend {
 
 StripedLRU::StripedLRU(size_t max_size, size_t strip_count) : strip_count(strip_count) {
     size_t strip_size = max_size / strip_count;
-    size_t min_size = 1024;
+    size_t min_size = 1024 * 1024;
     if (strip_size < min_size) {
         throw std::runtime_error("Invalid parameters: <max_size>, <strip_count>");
     }
     for (int i = 0; i < strip_count; i++) {
-        shards.push_back(std::make_shared<ThreadSafeSimplLRU>(strip_size));
+        shards.push_back(std::unique_ptr<ThreadSafeSimplLRU>(new ThreadSafeSimplLRU(strip_size)));
     }
 }
 
